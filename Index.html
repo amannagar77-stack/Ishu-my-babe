@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ishu 💖 Valentine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        background: linear-gradient(135deg, #ffdde1, #ee9ca7);
+        font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        color: #5a0f2e;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.96);
+        padding: 30px;
+        border-radius: 22px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+        max-width: 92%;
+        z-index: 2;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    p {
+        font-size: 1.1rem;
+    }
+
+    .buttons {
+        margin-top: 20px;
+        position: relative;
+        height: 160px;
+    }
+
+    button {
+        border: none;
+        cursor: pointer;
+        border-radius: 14px;
+        transition: all 0.4s ease;
+        font-size: 1.1rem;
+        padding: 14px 22px;
+    }
+
+    #yes {
+        background: #ff4d6d;
+        color: white;
+        position: absolute;
+        left: 18%;
+    }
+
+    #no {
+        background: #adb5bd;
+        color: #333;
+        position: absolute;
+        right: 18%;
+    }
+
+    .message {
+        margin-top: 15px;
+        font-style: italic;
+        min-height: 24px;
+    }
+
+    .final {
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(135deg, #ff758f, #ff7eb3);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        color: white;
+        z-index: 3;
+        animation: pop 0.6s ease forwards;
+    }
+
+    .final img {
+        width: 200px;
+        margin: 20px;
+        border-radius: 14px;
+    }
+
+    canvas {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 4;
+    }
+
+    @keyframes pop {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+</style>
+</head>
+<body>
+
+<audio id="music" loop>
+    <source src="https://cdn.pixabay.com/audio/2023/02/14/audio_6e6b9bcbde.mp3" type="audio/mpeg">
+</audio>
+
+<canvas id="confetti"></canvas>
+
+<div class="card" id="card">
+    <h1>Ishu 🌸</h1>
+    <p>
+        Somehow in just 10 months,<br>
+        you became my favorite notification,  
+        my safe place, and my favorite chaos 💗  
+        <br><br>
+        So I have one very important question…
+    </p>
+    <h1>Will you be my Valentine? 💌</h1>
+
+    <div class="buttons">
+        <button id="yes">YES 💖</button>
+        <button id="no">NO 🙃</button>
+    </div>
+
+    <div class="message" id="message"></div>
+</div>
+
+<div class="final" id="final">
+    <h1>IT WAS ALWAYS YES 😭💖</h1>
+    <img src="https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif" alt="cat">
+    <p style="max-width: 520px;">
+        Congratulations Ishu 🎉  
+        You are now officially, emotionally,  
+        permanently and proudly  
+        <strong>MY VALENTINE 💘</strong><br><br>
+        Thank you for being soft, funny, dramatic  
+        and choosing me every day.
+    </p>
+</div>
+
+<script>
+let scale = 1;
+let noClicks = 0;
+const yes = document.getElementById("yes");
+const no = document.getElementById("no");
+const msg = document.getElementById("message");
+const final = document.getElementById("final");
+const music = document.getElementById("music");
+
+const messages = [
+    "Are you sure, Ishu? 🥺",
+    "Think again 🙃",
+    "This is getting suspicious…",
+    "Okay but I asked nicely 💖",
+    "You’re just teasing now 👀",
+    "Resistance is futile 😌"
+];
+
+no.addEventListener("click", () => {
+    noClicks++;
+    scale += 0.35;
+    yes.style.transform = `scale(${scale})`;
+    no.style.transform = `scale(${1 - noClicks * 0.1})`;
+    msg.innerText = messages[Math.min(noClicks - 1, messages.length - 1)];
+
+    if (scale > 4) {
+        yes.style.position = "fixed";
+        yes.style.inset = "0";
+        yes.style.borderRadius = "0";
+        yes.style.fontSize = "3rem";
+        yes.innerText = "YES ISHU 💖";
+    }
+});
+
+yes.addEventListener("click", () => {
+    music.play();
+    final.style.display = "flex";
+    startConfetti();
+});
+
+// 🎊 CONFETTI
+function startConfetti() {
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const pieces = Array.from({ length: 150 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 20,
+        color: `hsl(${Math.random() * 360}, 100%, 70%)`
+    }));
+
+    let angle = 0;
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        angle += 0.01;
+
+        pieces.forEach(p => {
+            p.y += Math.cos(angle + p.d) + 2;
+            p.x += Math.sin(angle);
+            if (p.y > canvas.height) {
+                p.y = -10;
+                p.x = Math.random() * canvas.width;
+            }
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.fill();
+        });
+
+        requestAnimationFrame(draw);
+    }
+    draw();
+}
+</script>
+
+</body>
+</html>
